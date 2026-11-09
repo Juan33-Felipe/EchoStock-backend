@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
@@ -50,6 +51,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String detail = "Valor no válido para el parámetro '%s': '%s'".formatted(ex.getName(), ex.getValue());
         return problem(HttpStatus.BAD_REQUEST, ProblemTypes.BAD_REQUEST, "Petición no válida", detail);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<Object> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
+        return problem(HttpStatus.CONFLICT, ProblemTypes.CONFLICT, "Conflicto de estado",
+                "El recurso fue modificado por otra petición al mismo tiempo; vuelve a intentarlo");
     }
 
     @ExceptionHandler(Exception.class)
