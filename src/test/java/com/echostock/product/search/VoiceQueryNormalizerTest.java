@@ -103,6 +103,38 @@ class VoiceQueryNormalizerTest {
     }
 
     @Nested
+    @DisplayName("nombres de letras")
+    class LetterNames {
+
+        @ParameterizedTest(name = "\"{0}\" → \"{1}\"")
+        @CsvSource(delimiter = '|', value = {
+                "se jota a cero cero uno         | cja 0 0 1",
+                "ce jota a cero cero uno         | cja 0 0 1",
+                "efe ele eme cero cero dos       | flm 0 0 2",
+                "be de cero uno                  | bd 0 1",
+                "de a uno                        | da 1",
+                "pe ele te uno                   | plt 1",
+                "hache cota ka erre ese uve ve   | hjkrsvv",
+                "equis ye zeta ge cu ene         | xyzgqn",
+                "doble ve uno                    | w 1",
+                "doble uve                       | w",
+                "uve doble                       | w",
+                "guantes de nitrilo talla eme    | guantes de nitrilo talla m",
+                "cajas de carton doble canal     | cajas de carton doble canal",
+                "cajas de archivo                | cajas de archivo",
+        })
+        void mapsLetterNames(String raw, String expected) {
+            assertThat(VoiceQueryNormalizer.normalize(raw)).isEqualTo(expected);
+        }
+
+        @Test
+        void spokenLetterNamesMatchSkuCompact() {
+            List<String> code = VoiceQueryNormalizer.codeTokens(VoiceQueryNormalizer.tokens("se jota a cero cero uno"));
+            assertThat(VoiceQueryNormalizer.compact(code)).isEqualTo("cja001");
+        }
+    }
+
+    @Nested
     @DisplayName("vista de código")
     class CodeView {
 

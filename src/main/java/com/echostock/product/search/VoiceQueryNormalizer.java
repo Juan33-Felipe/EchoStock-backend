@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
  *       {@code "ciento dos"} → {@code 102}, {@code "dos mil quinientos"} → {@code 2500}.
  *       Palabras numéricas sueltas consecutivas siguen separadas:
  *       {@code "cero cero uno"} → {@code "0 0 1"}.</li>
+ *   <li>Nombres de letras → letras, tal como los transcribe el reconocedor de voz
+ *       ({@code "se jota a"} → {@code "c j a"}). {@code "de"} solo se convierte en {@code d} dentro de un
+ *       deletreo (junto a una letra, un nombre de letra o un número); si no, se mantiene como palabra
+ *       ({@code "guantes de nitrilo"}).</li>
  *   <li>Letras sueltas consecutivas se unen ({@code "c j a"} → {@code "cja"}).</li>
  * </ol>
  *
@@ -62,6 +66,19 @@ public final class VoiceQueryNormalizer {
     private static final String HUNDRED_ALONE = "cien";
     private static final String THOUSAND = "mil";
 
+    /** Nombres de letras en español que se convierten siempre (sin ambigüedad en este dominio). */
+    private static final Map<String, String> LETTER_NAMES = Map.ofEntries(
+            Map.entry("be", "b"), Map.entry("ce", "c"), Map.entry("se", "c"), Map.entry("efe", "f"),
+            Map.entry("ge", "g"), Map.entry("hache", "h"), Map.entry("jota", "j"), Map.entry("cota", "j"),
+            Map.entry("ka", "k"), Map.entry("ele", "l"), Map.entry("eme", "m"), Map.entry("ene", "n"),
+            Map.entry("pe", "p"), Map.entry("cu", "q"), Map.entry("erre", "r"), Map.entry("ese", "s"),
+            Map.entry("te", "t"), Map.entry("uve", "v"), Map.entry("ve", "v"), Map.entry("equis", "x"),
+            Map.entry("ye", "y"), Map.entry("zeta", "z"));
+
+    /** "de" solo es la letra d dentro de un deletreo. */
+    private static final String LETTER_DE = "de";
+    private static final String DOUBLE = "doble";
+
     /** Resultado de reconocer una expresión numérica: valor y número de tokens consumidos. */
     private record Parsed(int value, int consumed) {
     }
@@ -86,7 +103,7 @@ public final class VoiceQueryNormalizer {
         if (folded.isEmpty()) {
             return List.of();
         }
-        return joinSingleLetters(wordsToNumbers(Arrays.asList(folded.split(" "))));
+        return joinSingleLetters(wordsToNumbers(letterNamesToLetters(Arrays.asList(folded.split(" ")))));
     }
 
     /** Minúsculas, sin tildes y con cualquier carácter no alfanumérico convertido en un espacio. */
@@ -236,6 +253,51 @@ public final class VoiceQueryNormalizer {
             }
         }
         return new Parsed(tens, 1);
+    }
+
+    /**
+     * Convierte nombres de letras en letras: {@code "se jota a"} → {@code [c, j, a]},
+     * {@code "doble ve"}/{@code "doble uve"}/{@code "uve doble"} → {@code w}. {@code "de"} → {@code d} solo
+     * si algún token vecino (en la transcripción original) es una letra suelta, un nombre de letra o un
+     * número (en dígitos o en palabras).
+     */
+    static List<String> letterNamesToLetters(List<String> tokens) {
+        List<String> out = new ArrayList<>(tokens.size());
+        int i = 0;
+        while (i < tokens.size()) {
+            String token = tokens.get(i);
+            String next = i + 1 < tokens.size() ? tokens.get(i + 1) : null;
+            if (DOUBLE.equals(token) && ("ve".equals(next) || "uve".equals(next))) {
+                out.add("w");
+                i += 2;
+            } else if ("uve".equals(token) && DOUBLE.equals(next)) {
+                out.add("w");
+                i += 2;
+            } else if (LETTER_NAMES.containsKey(token)) {
+                out.add(LETTER_NAMES.get(token));
+                i++;
+            } else if (LETTER_DE.equals(token) && isInsideSpelling(tokens, i)) {
+                out.add("d");
+                i++;
+            } else {
+                out.add(token);
+                i++;
+            }
+        }
+        return out;
+    }
+
+    private static boolean isInsideSpelling(List<String> tokens, int index) {
+        return (index > 0 && isSpellingToken(tokens.get(index - 1)))
+                || (index + 1 < tokens.size() && isSpellingToken(tokens.get(index + 1)));
+    }
+
+    private static boolean isSpellingToken(String token) {
+        return (token.length() == 1 && Character.isLetter(token.charAt(0)))
+                || LETTER_NAMES.containsKey(token)
+                || token.chars().allMatch(Character::isDigit)
+                || UNITS.containsKey(token) || TENS.containsKey(token) || HUNDREDS.containsKey(token)
+                || HUNDRED_ALONE.equals(token) || THOUSAND.equals(token);
     }
 
     /** Une letras sueltas consecutivas: {@code [c, j, a, 0]} → {@code [cja, 0]}. */

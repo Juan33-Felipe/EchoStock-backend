@@ -71,6 +71,7 @@ class ProductSearchScorerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"CJA-001", "cja001", "sku c j a cero cero uno", "código c j a guion cero cero uno",
+            "se jota a cero cero uno",
             "C J A 0 0 1"})
     void skuVariants_areExactSkuMatches(String query) {
         Hit<Searchable> top = search(query).get(0);
@@ -142,6 +143,7 @@ class ProductSearchScorerTest {
         assertThat(search("guantes anti corte").get(0).item().sku()).isEqualTo("GNT-003");
         assertThat(search("tornilos hexagonales").get(0).item().sku()).isEqualTo("TRN-001");
         assertThat(search("PALLETS EUROPEOS").get(0).item().sku()).isEqualTo("PLT-001");
+        assertThat(search("guantes de nitrilo talla eme").get(0).item().sku()).isEqualTo("GNT-001");
     }
 
     @Test
