@@ -116,7 +116,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             if (problem.getType() == null || ABOUT_BLANK.equals(problem.getType())) {
                 problem.setType(ProblemTypes.forStatus(statusCode.value()));
             }
-            problem.setInstance(null);
         }
         return super.createResponseEntity(body, headers, statusCode, request);
     }
