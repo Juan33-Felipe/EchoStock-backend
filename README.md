@@ -41,7 +41,8 @@ El contrato de la API, compartido con la app, está en [`docs/api-contract.md`](
     específicas de ninguna base de datos:
     - `VoiceQueryNormalizer`: minúsculas, sin tildes, números en palabras → dígitos
       ("treinta y dos" → 32, "ciento dos" → 102, "dos mil quinientos" → 2500; "cero cero uno" → `0 0 1`),
-      letras sueltas unidas ("c j a" → `cja`) y palabras de relleno ignoradas al comparar códigos
+      nombres de letras → letras tal como los transcribe Vosk ("se jota a" → `c j a`; "de" → `d` solo
+      dentro de un deletreo, "guantes de nitrilo" se mantiene), letras sueltas unidas ("c j a" → `cja`) y palabras de relleno ignoradas al comparar códigos
       (pasillo, ubicación, estante, nivel, rack, sku, código, referencia, ref, producto, número, guion).
     - `ProductSearchScorer`: ranking SKU exacto (1.0) > SKU por segmentos (0.97) > ubicación exacta (0.9)
       > prefijo de SKU/ubicación > nombre por similitud (≤ 0.85, solapamiento de tokens con Levenshtein
