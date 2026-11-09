@@ -1,0 +1,6 @@
+# PostgreSQL 16 levantado con `docker compose up -d` (ver docker-compose.yml).
+spring:
+  datasource:
+    url: ${ECHOSTOCK_DB_URL:jdbc:postgresql://localhost:5432/echostock}
+    username: ${ECHOSTOCK_DB_USER:echostock}
+    password: ${ECHOSTOCK_DB_PASSWORD:echostock}

@@ -1,3 +1,43 @@
 spring:
   application:
     name: echostock-backend
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: always
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  # 0.0.0.0 para que el emulador Android llegue vía 10.0.2.2
+  address: 0.0.0.0
+  port: 8080
+  error:
+    include-stacktrace: never
+
+echostock:
+  # Clave exigida en la cabecera X-Api-Key para /api/**. Sobrescribible con ECHOSTOCK_API_KEY.
+  api-key: ${ECHOSTOCK_API_KEY:echostock-dev-key}
+  cors:
+    allowed-origin-patterns: "*"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs

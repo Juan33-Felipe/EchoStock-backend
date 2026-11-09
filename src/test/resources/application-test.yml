@@ -1,0 +1,9 @@
+# Perfil de tests: H2 en memoria, aislado de ./data
+spring:
+  datasource:
+    url: jdbc:h2:mem:echostock-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: false
