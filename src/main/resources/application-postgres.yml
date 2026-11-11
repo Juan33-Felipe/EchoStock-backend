@@ -1,6 +1,6 @@
 # PostgreSQL (local Docker o en la nube como Neon)
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:${ECHOSTOCK_DB_URL:jdbc:postgresql://localhost:5432/echostock}}
-    username: ${SPRING_DATASOURCE_USERNAME:${ECHOSTOCK_DB_USER:echostock}}
-    password: ${SPRING_DATASOURCE_PASSWORD:${ECHOSTOCK_DB_PASSWORD:echostock}}
+    url: ${SPRING_DATASOURCE_URL:${DATABASE_URL:${ECHOSTOCK_DB_URL:jdbc:postgresql://localhost:5432/echostock}}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DATABASE_USERNAME:${ECHOSTOCK_DB_USER:echostock}}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DATABASE_PASSWORD:${ECHOSTOCK_DB_PASSWORD:echostock}}}
