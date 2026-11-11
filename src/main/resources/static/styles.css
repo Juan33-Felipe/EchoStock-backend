@@ -10,7 +10,7 @@
   --echo-discrepancy: #FF4F4F;
   --echo-offline: #FFB627;
   --echo-on-color: #000000;
-  --watch-size: 384px;
+  --watch-size: min(92vw, 92vh, 440px);
 }
 
 [data-theme="light"] {
@@ -37,320 +37,20 @@
 
 html, body {
   width: 100%;
+  height: 100%;
   min-height: 100vh;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background: radial-gradient(circle at 35% 25%, #131922 0%, #090C10 60%, #040608 100%);
-  color: #F1F5F9;
-  overflow-x: hidden;
-}
-
-/* ==================== BARRA SUPERIOR DEL EMULADOR ==================== */
-.demo-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background: rgba(15, 20, 28, 0.85);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.brand-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.brand-badge {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #5AD8FF, #2DD4BF 55%, #4F8CFF);
-  box-shadow: 0 0 14px rgba(90, 216, 255, 0.45);
-  display: grid;
-  place-items: center;
-}
-
-.brand-title {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+  margin: 0;
+  padding: 0;
+  background: #000000;
   color: #FFFFFF;
-}
-
-.brand-sub {
-  font-size: 11px;
-  color: #94A3B8;
-  font-weight: 500;
-}
-
-.topbar-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.mode-pill-group {
-  display: inline-flex;
-  background: #131922;
-  padding: 3px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-}
-
-.mode-pill {
-  background: transparent;
-  color: #94A3B8;
-  border: none;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.mode-pill:hover {
-  color: #E2E8F0;
-}
-
-.mode-pill.active {
-  background: #222932;
-  color: #5AD8FF;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-
-.top-action-btn {
-  background: rgba(34, 41, 50, 0.9);
-  color: #E2E8F0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.18s ease;
-}
-
-.top-action-btn:hover {
-  background: rgba(48, 58, 70, 1);
-  border-color: rgba(90, 216, 255, 0.4);
-}
-
-.top-action-btn.offline-active {
-  background: rgba(255, 182, 39, 0.18);
-  color: #FFB627;
-  border-color: rgba(255, 182, 39, 0.55);
-}
-
-/* ==================== LAYOUT PRINCIPAL ==================== */
-.workspace-layout {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  padding: 16px;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* ==================== HARDWARE DEL SMARTWATCH (EMULADOR) ==================== */
-.watch-stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.watch-strap {
-  width: 164px;
-  height: 54px;
-  background: repeating-linear-gradient(
-    0deg,
-    #181D24 0px,
-    #181D24 8px,
-    #12161C 8px,
-    #12161C 14px
-  );
-  border-left: 3px solid #262E38;
-  border-right: 3px solid #262E38;
-  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), 0 8px 20px rgba(0, 0, 0, 0.5);
-  position: relative;
-  z-index: 1;
-}
-
-.watch-strap.top {
-  border-radius: 26px 26px 0 0;
-  margin-bottom: -10px;
-}
-
-.watch-strap.bottom {
-  border-radius: 0 0 26px 26px;
-  margin-top: -10px;
-}
-
-.watch-lug {
-  width: 196px;
-  height: 16px;
-  background: linear-gradient(90deg, #1E242D, #3A4452 20%, #242B35 50%, #3A4452 80%, #1E242D);
-  z-index: 2;
-}
-
-.watch-lug.top {
-  border-radius: 10px 10px 0 0;
-  margin-bottom: -6px;
-}
-
-.watch-lug.bottom {
-  border-radius: 0 0 10px 10px;
-  margin-top: -6px;
-}
-
-.watch-chassis {
-  position: relative;
-  padding: 20px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 135deg,
-    #2C3440,
-    #495464,
-    #1E242C,
-    #3B4554,
-    #525E70,
-    #232A34,
-    #2C3440
-  );
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.85),
-    0 0 0 2px #151920,
-    inset 0 2px 5px rgba(255, 255, 255, 0.25),
-    inset 0 -3px 8px rgba(0, 0, 0, 0.7);
-  z-index: 3;
-  transition: transform 0.12s ease;
-}
-
-.watch-chassis.vibrating {
-  animation: watch-vibrate 0.28s linear;
-}
-
-@keyframes watch-vibrate {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(-2.5px, 1.5px) rotate(-0.4deg); }
-  40% { transform: translate(2.5px, -1.5px) rotate(0.4deg); }
-  60% { transform: translate(-2px, -1px) rotate(-0.3deg); }
-  80% { transform: translate(2px, 1px) rotate(0.3deg); }
-}
-
-.watch-inner-bezel {
-  padding: 6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #07090C 60%, #161B22 100%);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.95);
-  position: relative;
-}
-
-/* Corona Giratoria Interactiva (Rotary Crown) */
-.watch-crown {
-  position: absolute;
-  right: -18px;
-  top: 50%;
-  transform: translateY(-62px);
-  width: 18px;
-  height: 52px;
-  border-radius: 5px 9px 9px 5px;
-  background: repeating-linear-gradient(
-    180deg,
-    #4A5568 0px,
-    #4A5568 3px,
-    #1E242D 3px,
-    #1E242D 6px
-  );
-  border: 1px solid #64748B;
-  border-left: none;
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.65);
-  cursor: ns-resize;
-  z-index: 5;
-  transition: filter 0.15s ease, background-position 0.08s linear;
-}
-
-.watch-crown:hover {
-  filter: brightness(1.22);
-  border-color: #5AD8FF;
-}
-
-.watch-crown::after {
-  content: '';
-  position: absolute;
-  right: 3px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 16px;
-  border-radius: 2px;
-  background: #5AD8FF;
-  opacity: 0.85;
-}
-
-/* Botón físico lateral secundario (Back / Inicio) */
-.watch-side-btn {
-  position: absolute;
-  right: -13px;
-  top: 50%;
-  transform: translateY(20px);
-  width: 13px;
-  height: 34px;
-  border-radius: 3px 7px 7px 3px;
-  background: linear-gradient(180deg, #3B4454, #1F252E);
-  border: 1px solid #475569;
-  border-left: none;
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-  z-index: 5;
-  transition: transform 0.1s ease, filter 0.15s ease;
-}
-
-.watch-side-btn:hover {
-  filter: brightness(1.2);
-}
-
-.watch-side-btn:active {
-  transform: translateY(20px) translateX(-3px);
-}
-
-.watch-hardware-hint {
-  margin-top: 12px;
-  font-size: 11px;
-  color: #94A3B8;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.watch-hardware-hint span {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(22, 27, 33, 0.75);
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-/* ==================== PANTALLA CIRCULAR WEAR OS (384x384) ==================== */
+/* ==================== PANTALLA CIRCULAR WEAR OS ==================== */
 .watch-screen {
   width: var(--watch-size);
   height: var(--watch-size);
@@ -363,11 +63,21 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 10px 40px rgba(0, 0, 0, 0.85);
   transition: background-color 0.25s ease, color 0.25s ease;
-  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.08);
 }
 
-/* Vignette superior e inferior (solo en modo oscuro como en MainActivity.kt) */
+/* Si se abre en smartwatch real o pantalla pequeña a pantalla completa */
+@media (max-width: 480px), (max-height: 480px) {
+  :root {
+    --watch-size: min(100vw, 100vh);
+  }
+  .watch-screen {
+    box-shadow: none;
+  }
+}
+
+/* Vignette superior e inferior (solo en modo oscuro como en Wear OS) */
 .watch-vignette {
   position: absolute;
   inset: 0;
@@ -402,7 +112,7 @@ html, body {
 /* TimeText superior de Wear OS */
 .wear-time-bar {
   position: absolute;
-  top: 10px;
+  top: 12px;
   left: 0;
   right: 0;
   display: flex;
@@ -534,7 +244,6 @@ html, body {
   }
 }
 
-/* Tipografía de Tema Wear OS (Theme.kt) */
 .eyebrow-text {
   font-size: 12px;
   font-weight: 700;
@@ -688,7 +397,7 @@ html, body {
   transform: scale(0.9);
 }
 
-/* ==================== 2. RESULTS SCREEN (ScalingLazyColumn) ==================== */
+/* ==================== 2. RESULTS SCREEN ==================== */
 .scaling-lazy-column {
   width: 100%;
   height: 100%;
@@ -897,7 +606,7 @@ html, body {
   margin-bottom: 12px;
 }
 
-/* ==================== 5. DONE SCREEN (Pantalla Completa de Color Universal) ==================== */
+/* ==================== 5. DONE SCREEN ==================== */
 .done-view {
   padding: 28px;
   cursor: pointer;
@@ -994,343 +703,4 @@ html, body {
   margin-top: 6px;
   font-size: 11.5px;
   color: var(--echo-muted);
-}
-
-/* ==================== PANEL LATERAL DE DEMOSTRACIÓN Y SUPERVISIÓN ==================== */
-.demo-panel {
-  flex: 1;
-  max-width: 560px;
-  background: rgba(18, 24, 32, 0.88);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-}
-
-.panel-tabs {
-  display: flex;
-  background: rgba(11, 15, 20, 0.75);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 6px;
-  gap: 6px;
-}
-
-.panel-tab {
-  flex: 1;
-  background: transparent;
-  color: #94A3B8;
-  border: none;
-  padding: 9px 10px;
-  font-size: 12.5px;
-  font-weight: 600;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-.panel-tab:hover {
-  color: #F1F5F9;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.panel-tab.active {
-  background: #222932;
-  color: #5AD8FF;
-}
-
-.panel-section {
-  display: none;
-  padding: 18px 20px;
-  flex-direction: column;
-  gap: 16px;
-  max-height: 540px;
-  overflow-y: auto;
-}
-
-.panel-section.active {
-  display: flex;
-}
-
-.section-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  padding: 14px;
-}
-
-.section-card-title {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #5AD8FF;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.section-card-desc {
-  font-size: 12px;
-  color: #94A3B8;
-  line-height: 1.45;
-  margin-bottom: 10px;
-}
-
-.voice-chips-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.voice-preset-btn {
-  background: #1C2430;
-  color: #E2E8F0;
-  border: 1px solid rgba(90, 216, 255, 0.2);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.voice-preset-btn:hover {
-  background: rgba(90, 216, 255, 0.15);
-  border-color: #5AD8FF;
-  color: #FFFFFF;
-  transform: translateY(-1px);
-}
-
-.voice-preset-btn:active {
-  transform: scale(0.95);
-}
-
-/* Tabla de Supervisión ERP/WMS */
-.audits-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.audit-item {
-  background: rgba(15, 20, 28, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.audit-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.audit-sku {
-  font-size: 13px;
-  font-weight: 700;
-  color: #F8FAFC;
-}
-
-.audit-meta {
-  font-size: 11.5px;
-  color: #94A3B8;
-}
-
-.audit-badge {
-  font-size: 10.5px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 999px;
-  text-transform: uppercase;
-}
-
-.audit-badge.CONFIRMED, .audit-badge.APPROVED {
-  background: rgba(46, 224, 126, 0.16);
-  color: #2EE07E;
-}
-
-.audit-badge.PENDING_REVIEW {
-  background: rgba(255, 182, 39, 0.18);
-  color: #FFB627;
-}
-
-.audit-badge.REJECTED {
-  background: rgba(255, 79, 79, 0.18);
-  color: #FF4F4F;
-}
-
-.audit-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.mini-btn {
-  border: none;
-  border-radius: 8px;
-  padding: 5px 9px;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: filter 0.15s ease;
-}
-
-.mini-btn.approve {
-  background: #2EE07E;
-  color: #000000;
-}
-
-.mini-btn.reject {
-  background: rgba(255, 79, 79, 0.2);
-  color: #FF4F4F;
-  border: 1px solid rgba(255, 79, 79, 0.4);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.form-field label {
-  font-size: 11.5px;
-  color: #94A3B8;
-  font-weight: 600;
-}
-
-.form-field input {
-  background: #0F141C;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #F8FAFC;
-  padding: 8px 11px;
-  border-radius: 9px;
-  font-size: 12.5px;
-  user-select: text;
-}
-
-.code-snippet {
-  background: #0B0F15;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 9px;
-  padding: 9px 11px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 11.5px;
-  color: #5AD8FF;
-  overflow-x: auto;
-  user-select: text;
-}
-
-/* ==================== MODOS DE VISUALIZACIÓN ==================== */
-/* Modo Presentación Limpia: solo el reloj con su bisel en el centro */
-body[data-view-mode="clean"] .demo-panel {
-  display: none;
-}
-
-/* Modo Reloj Nativo / Smartwatch 1:1 (PWA o Emulador de Dispositivo) */
-body[data-view-mode="watch"] {
-  background: var(--echo-bg);
-  overflow: hidden;
-}
-
-body[data-view-mode="watch"] .demo-topbar,
-body[data-view-mode="watch"] .demo-panel,
-body[data-view-mode="watch"] .watch-strap,
-body[data-view-mode="watch"] .watch-lug,
-body[data-view-mode="watch"] .watch-crown,
-body[data-view-mode="watch"] .watch-side-btn,
-body[data-view-mode="watch"] .watch-hardware-hint {
-  display: none !important;
-}
-
-body[data-view-mode="watch"] .workspace-layout {
-  padding: 0;
-  min-height: 100vh;
-  width: 100vw;
-  height: 100vh;
-}
-
-body[data-view-mode="watch"] .watch-chassis,
-body[data-view-mode="watch"] .watch-inner-bezel {
-  padding: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-body[data-view-mode="watch"] .watch-screen {
-  width: min(100vw, 100vh);
-  height: min(100vw, 100vh);
-}
-
-/* Botón flotante sutil para salir del modo 1:1 en navegador de escritorio */
-.exit-watch-mode-btn {
-  position: fixed;
-  bottom: 12px;
-  right: 12px;
-  background: rgba(22, 27, 33, 0.85);
-  color: #94A3B8;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
-  padding: 5px 11px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  z-index: 200;
-  display: none;
-}
-
-body[data-view-mode="watch"] .exit-watch-mode-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* Auto-adaptación si se abre directamente en la pantalla de un Smartwatch real (<= 480px) */
-@media (max-width: 960px) {
-  .workspace-layout {
-    flex-direction: column;
-    gap: 24px;
-  }
-  .demo-panel {
-    width: 100%;
-    max-width: 600px;
-  }
-}
-
-@media (max-width: 480px) and (max-height: 480px) {
-  .demo-topbar,
-  .demo-panel,
-  .watch-strap,
-  .watch-lug,
-  .watch-crown,
-  .watch-side-btn,
-  .watch-hardware-hint,
-  .exit-watch-mode-btn {
-    display: none !important;
-  }
-  .workspace-layout {
-    padding: 0;
-    min-height: 100vh;
-  }
-  .watch-chassis,
-  .watch-inner-bezel {
-    padding: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-  .watch-screen {
-    width: 100vw;
-    height: 100vh;
-  }
 }

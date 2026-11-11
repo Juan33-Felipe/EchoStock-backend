@@ -16,257 +16,237 @@
 </head>
 <body>
 
-  <main class="workspace-layout">
-    <section class="watch-stage" aria-label="Smartwatch EchoStock">
-      <div class="watch-strap top" aria-hidden="true"></div>
-      <div class="watch-lug top" aria-hidden="true"></div>
+  <!-- PANTALLA PURA DEL SMARTWATCH (SIN CORREAS, SIN BISEL EXTERNO, SIN PANELES) -->
+  <main id="watchScreen" class="watch-screen" data-theme="dark">
+    <!-- Vignette superior e inferior -->
+    <div class="watch-vignette" aria-hidden="true"></div>
 
-      <div id="watchChassis" class="watch-chassis">
-        <!-- Corona giratoria física interactiva -->
-        <div id="watchCrown" class="watch-crown" title="Corona giratoria"></div>
-        <!-- Botón físico lateral (Atrás / Inicio) -->
-        <button id="watchSideBtn" class="watch-side-btn" type="button" aria-label="Volver atrás"></button>
+    <!-- Anillo de destello háptico (RNF-003) -->
+    <div id="hapticRing" class="haptic-ring" aria-hidden="true"></div>
 
-        <div class="watch-inner-bezel">
-          <!-- PANTALLA CIRCULAR AMOLED 384x384 -->
-          <div id="watchScreen" class="watch-screen" data-theme="dark">
-            <!-- Vignette superior e inferior -->
-            <div class="watch-vignette" aria-hidden="true"></div>
+    <!-- TimeText + CaptionBanner de síntesis de voz (RF-002) -->
+    <div class="wear-time-bar">
+      <div id="wearTimeText" class="wear-time-text">19:30</div>
+      <div id="captionBanner" class="caption-banner" role="status" aria-live="polite">
+        <svg class="caption-eq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="6" x2="8" y2="18"/>
+          <line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="6" x2="16" y2="18"/>
+          <line x1="20" y1="10" x2="20" y2="14"/>
+        </svg>
+        <span id="captionText" class="caption-text"></span>
+      </div>
+    </div>
 
-            <!-- Anillo de destello háptico (RNF-003) -->
-            <div id="hapticRing" class="haptic-ring" aria-hidden="true"></div>
+    <!-- PositionIndicator lateral -->
+    <div id="positionIndicator" class="position-indicator" aria-hidden="true">
+      <div id="positionIndicatorThumb" class="position-indicator-thumb"></div>
+    </div>
 
-            <!-- TimeText + CaptionBanner de síntesis de voz (RF-002) -->
-            <div class="wear-time-bar">
-              <div id="wearTimeText" class="wear-time-text">19:30</div>
-              <div id="captionBanner" class="caption-banner" role="status" aria-live="polite">
-                <svg class="caption-eq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-                  <line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="6" x2="8" y2="18"/>
-                  <line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="6" x2="16" y2="18"/>
-                  <line x1="20" y1="10" x2="20" y2="14"/>
-                </svg>
-                <span id="captionText" class="caption-text"></span>
-              </div>
+    <!-- ROUTER DE PANTALLAS WEAR OS -->
+    <div class="watch-router">
+
+      <!-- 1. HOME SCREEN -->
+      <div id="view-HOME" class="watch-view active">
+        <div class="orb-container">
+          <div id="homeSearchingRing" class="orb-progress-ring"></div>
+          <button id="homeOrbBtn" class="orb-button" type="button" aria-label="Dictar producto, SKU, ubicación o comando">
+            <canvas id="homeOrbCanvas" width="116" height="116" style="width:96px;height:96px;"></canvas>
+          </button>
+        </div>
+
+        <div id="homeMessageText" class="home-message">
+          Dicta producto, “agregar…” o “eliminar…”
+        </div>
+
+        <div class="home-status-row">
+          <div class="status-pill">
+            <span id="statusDot" class="status-dot"></span>
+            <span id="statusLabel">En línea · OP-07</span>
+          </div>
+          <button id="themeToggleBtn" class="theme-compact-btn" type="button" aria-label="Cambiar modo oscuro o claro">
+            <svg id="themeToggleIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></svg>
+          </button>
+        </div>
+
+        <div class="home-chips-row">
+          <button id="browseCatalogBtn" class="compact-chip" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            <span>Catálogo</span>
+          </button>
+          <button id="homeAddProductBtn" class="compact-chip signal" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Nuevo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. RESULTS SCREEN (ScalingLazyColumn) -->
+      <div id="view-RESULTS" class="watch-view" style="padding:0;">
+        <div id="resultsScrollContainer" class="scaling-lazy-column">
+          <div id="resultsHeaderTitle" class="results-header">Catálogo</div>
+          <button id="resultsAddProductBtn" class="compact-chip signal" type="button" style="margin-bottom:4px;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Agregar por voz</span>
+          </button>
+          <div id="resultsOfflineBanner" class="offline-banner-label" style="display:none;">
+            SIN CONEXIÓN · CATÁLOGO LOCAL
+          </div>
+          <div id="resultsItemsContainer" style="width:100%;display:flex;flex-direction:column;gap:7px;"></div>
+        </div>
+      </div>
+
+      <!-- 3. PRODUCT SCREEN -->
+      <div id="view-PRODUCT" class="watch-view">
+        <div id="productEyebrow" class="eyebrow-text" style="color:var(--echo-signal);margin-top:10px;">A-01-03 · CJA-001</div>
+        <div id="productName" class="product-name-title">Cajas tipo A</div>
+
+        <!-- Vista normal de auditoría -->
+        <div id="productNormalSection" style="display:flex;flex-direction:column;align-items:center;">
+          <div id="productRepeatBox" class="product-qty-box" title="Toca para repetir lectura por voz">
+            <div class="product-qty-row">
+              <span id="productSystemQty" class="quantity-text">50</span>
+              <span id="productUnit" class="product-unit-label">cajas</span>
             </div>
+            <span class="eyebrow-text" style="color:var(--echo-muted);margin-top:2px;">SEGÚN SISTEMA</span>
+          </div>
 
-            <!-- PositionIndicator lateral -->
-            <div id="positionIndicator" class="position-indicator" aria-hidden="true">
-              <div id="positionIndicatorThumb" class="position-indicator-thumb"></div>
-            </div>
+          <div class="product-actions-row">
+            <button id="productDeleteRequestBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-discrepancy);" type="button" aria-label="Eliminar producto">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
 
-            <!-- ROUTER DE PANTALLAS WEAR OS -->
-            <div class="watch-router">
+            <button id="productMismatchBtn" class="press-btn btn-circle-52" style="background:var(--echo-discrepancy);color:var(--echo-on-color);" type="button" aria-label="No coincide, registrar cantidad real">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+              </svg>
+            </button>
 
-              <!-- 1. HOME SCREEN -->
-              <div id="view-HOME" class="watch-view active">
-                <div class="orb-container">
-                  <div id="homeSearchingRing" class="orb-progress-ring"></div>
-                  <button id="homeOrbBtn" class="orb-button" type="button" aria-label="Dictar producto, SKU, ubicación o comando">
-                    <canvas id="homeOrbCanvas" width="116" height="116" style="width:96px;height:96px;"></canvas>
-                  </button>
-                </div>
+            <button id="productMatchBtn" class="press-btn btn-pill-ok" style="background:var(--echo-match);color:var(--echo-on-color);" type="button" aria-label="Coincide, confirmar conteo">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>OK</span>
+            </button>
+          </div>
+        </div>
 
-                <div id="homeMessageText" class="home-message">
-                  Dicta producto, “agregar…” o “eliminar…”
-                </div>
-
-                <div class="home-status-row">
-                  <div class="status-pill">
-                    <span id="statusDot" class="status-dot"></span>
-                    <span id="statusLabel">En línea · OP-07</span>
-                  </div>
-                  <button id="themeToggleBtn" class="theme-compact-btn" type="button" aria-label="Cambiar modo oscuro o claro">
-                    <svg id="themeToggleIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></svg>
-                  </button>
-                </div>
-
-                <div class="home-chips-row">
-                  <button id="browseCatalogBtn" class="compact-chip" type="button">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
-                      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                      <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-                    </svg>
-                    <span>Catálogo</span>
-                  </button>
-                  <button id="homeAddProductBtn" class="compact-chip signal" type="button">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    <span>Nuevo</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- 2. RESULTS SCREEN (ScalingLazyColumn) -->
-              <div id="view-RESULTS" class="watch-view" style="padding:0;">
-                <div id="resultsScrollContainer" class="scaling-lazy-column">
-                  <div id="resultsHeaderTitle" class="results-header">Catálogo</div>
-                  <button id="resultsAddProductBtn" class="compact-chip signal" type="button" style="margin-bottom:4px;flex-shrink:0;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    <span>Agregar por voz</span>
-                  </button>
-                  <div id="resultsOfflineBanner" class="offline-banner-label" style="display:none;">
-                    SIN CONEXIÓN · CATÁLOGO LOCAL
-                  </div>
-                  <div id="resultsItemsContainer" style="width:100%;display:flex;flex-direction:column;gap:7px;"></div>
-                </div>
-              </div>
-
-              <!-- 3. PRODUCT SCREEN -->
-              <div id="view-PRODUCT" class="watch-view">
-                <div id="productEyebrow" class="eyebrow-text" style="color:var(--echo-signal);margin-top:10px;">A-01-03 · CJA-001</div>
-                <div id="productName" class="product-name-title">Cajas tipo A</div>
-
-                <!-- Vista normal de auditoría -->
-                <div id="productNormalSection" style="display:flex;flex-direction:column;align-items:center;">
-                  <div id="productRepeatBox" class="product-qty-box" title="Toca para repetir lectura por voz">
-                    <div class="product-qty-row">
-                      <span id="productSystemQty" class="quantity-text">50</span>
-                      <span id="productUnit" class="product-unit-label">cajas</span>
-                    </div>
-                    <span class="eyebrow-text" style="color:var(--echo-muted);margin-top:2px;">SEGÚN SISTEMA</span>
-                  </div>
-
-                  <div class="product-actions-row">
-                    <button id="productDeleteRequestBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-discrepancy);" type="button" aria-label="Eliminar producto">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                        <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                      </svg>
-                    </button>
-
-                    <button id="productMismatchBtn" class="press-btn btn-circle-52" style="background:var(--echo-discrepancy);color:var(--echo-on-color);" type="button" aria-label="No coincide, registrar cantidad real">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                      </svg>
-                    </button>
-
-                    <button id="productMatchBtn" class="press-btn btn-pill-ok" style="background:var(--echo-match);color:var(--echo-on-color);" type="button" aria-label="Coincide, confirmar conteo">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      <span>OK</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Confirmación de eliminación -->
-                <div id="productDeleteSection" style="display:none;flex-direction:column;align-items:center;margin-top:10px;">
-                  <div style="font-size:14px;font-weight:600;color:var(--echo-discrepancy);margin-bottom:12px;">
-                    ¿Eliminar del catálogo?
-                  </div>
-                  <div class="product-actions-row">
-                    <button id="productCancelDeleteBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Cancelar eliminación">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                    </button>
-                    <button id="productConfirmDeleteBtn" class="press-btn btn-pill-wide" style="background:var(--echo-discrepancy);color:var(--echo-on-color);" type="button" aria-label="Confirmar eliminación">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
-                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      </svg>
-                      <span>Eliminar</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 4. COUNT SCREEN (Discrepancias RF-004) -->
-              <div id="view-COUNT" class="watch-view">
-                <div class="eyebrow-text" style="color:var(--echo-muted);margin-top:8px;">CONTEO REAL</div>
-
-                <div class="stepper-row">
-                  <button id="countMinusBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Restar uno">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  </button>
-
-                  <div id="countNumberValue" class="quantity-text count-number-display" style="color:var(--echo-match);">50</div>
-
-                  <button id="countPlusBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Sumar uno">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  </button>
-                </div>
-
-                <div id="countDiffText" class="count-diff-text" style="color:var(--echo-match);">Igual al sistema</div>
-
-                <div class="product-actions-row">
-                  <button id="countDictateBtn" class="orb-button" type="button" aria-label="Dictar cantidad por voz">
-                    <canvas id="countOrbCanvas" width="76" height="76" style="width:62px;height:62px;"></canvas>
-                  </button>
-
-                  <button id="countSubmitBtn" class="press-btn btn-pill-wide" style="background:var(--echo-match);color:var(--echo-on-color);" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    <span>Registrar</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- 5. ADD PRODUCT SCREEN -->
-              <div id="view-ADD_PRODUCT" class="watch-view">
-                <div class="eyebrow-text" style="color:var(--echo-signal);margin-top:8px;">NUEVO PRODUCTO</div>
-                <div id="addProductNameText" class="product-name-title" style="font-size:15px;margin-top:4px;">
-                  Toca el orbe y dicta el nombre
-                </div>
-                <div id="addProductMetaText" style="font-size:12px;color:var(--echo-muted);margin-top:2px;">
-                  A-01-01 · unidades
-                </div>
-
-                <div class="stepper-row" style="margin:6px 0;">
-                  <button id="addMinusBtn" class="press-btn" style="width:44px;height:44px;background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Restar uno">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  </button>
-                  <div id="addProductQtyValue" style="font-size:34px;font-weight:800;min-width:66px;text-align:center;font-variant-numeric:tabular-nums;">10</div>
-                  <button id="addPlusBtn" class="press-btn" style="width:44px;height:44px;background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Sumar uno">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  </button>
-                </div>
-
-                <div class="product-actions-row">
-                  <button id="addDictateBtn" class="orb-button" type="button" aria-label="Dictar nombre y cantidad del producto">
-                    <canvas id="addOrbCanvas" width="72" height="72" style="width:58px;height:58px;"></canvas>
-                  </button>
-                  <button id="addProductSaveBtn" class="press-btn btn-pill-wide" style="background:var(--echo-match);color:var(--echo-on-color);" type="button" disabled>
-                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    <span>Guardar</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- 6. DONE SCREEN (Pantalla Completa de Color Universal RNF-002) -->
-              <div id="view-DONE" class="watch-view done-view" style="background:var(--echo-match);color:var(--echo-on-color);">
-                <div class="done-icon-wrap">
-                  <svg id="doneIconSvg" width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></svg>
-                </div>
-                <div id="doneTitleText" class="done-title">Confirmado</div>
-                <div id="doneSubtitleText" class="done-subtitle">Cajas tipo A</div>
-              </div>
-
-            </div>
-
-            <!-- LISTENING OVERLAY (Ondas y Orbe en vivo) -->
-            <div id="listeningOverlay" class="listening-overlay" role="dialog" aria-label="Escuchando comando de voz">
-              <div id="listeningStatusText" class="eyebrow-text" style="color:var(--echo-signal);">ESCUCHANDO</div>
-              <div class="listening-orb-box">
-                <canvas id="listeningRipplesCanvas" class="ripples-canvas" width="140" height="140"></canvas>
-                <canvas id="listeningOrbCanvas" width="104" height="104" style="width:86px;height:86px;"></canvas>
-              </div>
-              <div id="listeningPromptText" class="listening-prompt-text">Producto, “agregar…” o “eliminar…”</div>
-              <div class="listening-tap-hint">Toca para terminar</div>
-            </div>
-
+        <!-- Confirmación de eliminación -->
+        <div id="productDeleteSection" style="display:none;flex-direction:column;align-items:center;margin-top:10px;">
+          <div style="font-size:14px;font-weight:600;color:var(--echo-discrepancy);margin-bottom:12px;">
+            ¿Eliminar del catálogo?
+          </div>
+          <div class="product-actions-row">
+            <button id="productCancelDeleteBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Cancelar eliminación">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <button id="productConfirmDeleteBtn" class="press-btn btn-pill-wide" style="background:var(--echo-discrepancy);color:var(--echo-on-color);" type="button" aria-label="Confirmar eliminación">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              </svg>
+              <span>Eliminar</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="watch-lug bottom" aria-hidden="true"></div>
-      <div class="watch-strap bottom" aria-hidden="true"></div>
-    </section>
+      <!-- 4. COUNT SCREEN (Discrepancias RF-004) -->
+      <div id="view-COUNT" class="watch-view">
+        <div class="eyebrow-text" style="color:var(--echo-muted);margin-top:8px;">CONTEO REAL</div>
+
+        <div class="stepper-row">
+          <button id="countMinusBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Restar uno">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+
+          <div id="countNumberValue" class="quantity-text count-number-display" style="color:var(--echo-match);">50</div>
+
+          <button id="countPlusBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Sumar uno">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+
+        <div id="countDiffText" class="count-diff-text" style="color:var(--echo-match);">Igual al sistema</div>
+
+        <div class="product-actions-row">
+          <button id="countDictateBtn" class="orb-button" type="button" aria-label="Dictar cantidad por voz">
+            <canvas id="countOrbCanvas" width="76" height="76" style="width:62px;height:62px;"></canvas>
+          </button>
+
+          <button id="countSubmitBtn" class="press-btn btn-pill-wide" style="background:var(--echo-match);color:var(--echo-on-color);" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Registrar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. ADD PRODUCT SCREEN -->
+      <div id="view-ADD_PRODUCT" class="watch-view">
+        <div class="eyebrow-text" style="color:var(--echo-signal);margin-top:8px;">NUEVO PRODUCTO</div>
+        <div id="addProductNameText" class="product-name-title" style="font-size:15px;margin-top:4px;">
+          Toca el orbe y dicta el nombre
+        </div>
+        <div id="addProductMetaText" style="font-size:12px;color:var(--echo-muted);margin-top:2px;">
+          A-01-01 · unidades
+        </div>
+
+        <div class="stepper-row" style="margin:6px 0;">
+          <button id="addMinusBtn" class="press-btn" style="width:44px;height:44px;background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Restar uno">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div id="addProductQtyValue" style="font-size:34px;font-weight:800;min-width:66px;text-align:center;font-variant-numeric:tabular-nums;">10</div>
+          <button id="addPlusBtn" class="press-btn" style="width:44px;height:44px;background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Sumar uno">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+
+        <div class="product-actions-row">
+          <button id="addDictateBtn" class="orb-button" type="button" aria-label="Dictar nombre y cantidad del producto">
+            <canvas id="addOrbCanvas" width="72" height="72" style="width:58px;height:58px;"></canvas>
+          </button>
+          <button id="addProductSaveBtn" class="press-btn btn-pill-wide" style="background:var(--echo-match);color:var(--echo-on-color);" type="button" disabled>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Guardar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 6. DONE SCREEN (Pantalla Completa de Color Universal RNF-002) -->
+      <div id="view-DONE" class="watch-view done-view" style="background:var(--echo-match);color:var(--echo-on-color);">
+        <div class="done-icon-wrap">
+          <svg id="doneIconSvg" width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></svg>
+        </div>
+        <div id="doneTitleText" class="done-title">Confirmado</div>
+        <div id="doneSubtitleText" class="done-subtitle">Cajas tipo A</div>
+      </div>
+
+    </div>
+
+    <!-- LISTENING OVERLAY (Ondas y Orbe en vivo) -->
+    <div id="listeningOverlay" class="listening-overlay" role="dialog" aria-label="Escuchando comando de voz">
+      <div id="listeningStatusText" class="eyebrow-text" style="color:var(--echo-signal);">ESCUCHANDO</div>
+      <div class="listening-orb-box">
+        <canvas id="listeningRipplesCanvas" class="ripples-canvas" width="140" height="140"></canvas>
+        <canvas id="listeningOrbCanvas" width="104" height="104" style="width:86px;height:86px;"></canvas>
+      </div>
+      <div id="listeningPromptText" class="listening-prompt-text">Producto, “agregar…” o “eliminar…”</div>
+      <div class="listening-tap-hint">Toca para terminar</div>
+    </div>
   </main>
 
   <script src="./web-config.js"></script>
