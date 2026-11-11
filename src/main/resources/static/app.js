@@ -1902,13 +1902,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('listeningOverlay').addEventListener('click', () => stopListening(false));
   document.getElementById('watchSideBtn').addEventListener('click', navigateBack);
 
-  // Controles superiores de vista y modo offline
+  // Controles superiores de vista y modo offline (opcionales si existen)
   document.querySelectorAll('[data-set-mode]').forEach((btn) => {
     btn.addEventListener('click', () => setViewMode(btn.getAttribute('data-set-mode')));
   });
-  document.getElementById('exitWatchModeBtn').addEventListener('click', () => setViewMode('emulator'));
+  document.getElementById('exitWatchModeBtn')?.addEventListener('click', () => setViewMode('emulator'));
 
-  document.getElementById('toggleOfflineBtn').addEventListener('click', async () => {
+  document.getElementById('toggleOfflineBtn')?.addEventListener('click', async () => {
     appState.simulatedOffline = !appState.simulatedOffline;
     if (appState.simulatedOffline) {
       appState.connection = 'OFFLINE';

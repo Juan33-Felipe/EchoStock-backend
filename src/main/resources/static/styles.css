@@ -160,11 +160,9 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 36px;
-  padding: 24px 24px 36px;
-  min-height: calc(100vh - 58px);
-  max-width: 1320px;
-  margin: 0 auto;
+  min-height: 100vh;
+  width: 100%;
+  padding: 16px;
 }
 
 /* ==================== HARDWARE DEL SMARTWATCH (EMULADOR) ==================== */
