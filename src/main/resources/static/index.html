@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>EchoStock — Smartwatch Wear OS (Demo Web &amp; PWA)</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-view-mode="emulator">
+
+  <!-- ==================== BARRA SUPERIOR DEL EMULADOR WEB ==================== -->
+  <header class="demo-topbar">
+    <div class="brand-group">
+      <div class="brand-badge" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">EchoStock · Wear OS 5</div>
+        <div class="brand-sub">Auditoría de Inventario por Voz · Emulador Web &amp; PWA</div>
+      </div>
+    </div>
+
+    <div class="topbar-controls">
+      <div class="mode-pill-group" role="group" aria-label="Modo de visualización">
+        <button class="mode-pill active" data-set-mode="emulator" type="button">⌚ Emulador + Panel</button>
+        <button class="mode-pill" data-set-mode="clean" type="button">🎯 Solo Reloj</button>
+        <button class="mode-pill" data-set-mode="watch" type="button">⭕ Pantalla Smartwatch 1:1</button>
+      </div>
+
+      <button id="toggleOfflineBtn" class="top-action-btn" type="button" title="Simular corte de WiFi en el almacén (RF-006)">
+        <span>📶</span> WiFi Almacén: En línea
+      </button>
+
+      <a href="/swagger-ui.html" target="_blank" rel="noopener" class="top-action-btn" style="text-decoration:none;">
+        <span>⚡</span> API Swagger
+      </a>
+    </div>
+  </header>
+
+  <!-- Botón flotante para volver al modo con bisel cuando se está en modo 1:1 -->
+  <button id="exitWatchModeBtn" class="exit-watch-mode-btn" type="button">
+    ⌚ Mostrar bisel y controles
+  </button>
+
+  <!-- ==================== ESCENARIO PRINCIPAL ==================== -->
+  <main class="workspace-layout">
+
+    <!-- ======== RELOJ INTELIGENTE WEAR OS ROUND ======== -->
+    <section class="watch-stage" aria-label="Smartwatch EchoStock">
+      <div class="watch-strap top" aria-hidden="true"></div>
+      <div class="watch-lug top" aria-hidden="true"></div>
+
+      <div id="watchChassis" class="watch-chassis">
+        <!-- Corona giratoria física interactiva -->
+        <div id="watchCrown" class="watch-crown" title="Corona giratoria: usa la rueda del ratón o arrastra verticalmente para ajustar cantidades o recorrer listas"></div>
+        <!-- Botón físico lateral (Atrás / Inicio) -->
+        <button id="watchSideBtn" class="watch-side-btn" type="button" title="Botón lateral del reloj (Volver atrás / Cancelar)"></button>
+
+        <div class="watch-inner-bezel">
+          <!-- PANTALLA CIRCULAR AMOLED 384x384 -->
+          <div id="watchScreen" class="watch-screen" data-theme="dark">
+            <!-- Vignette superior e inferior -->
+            <div class="watch-vignette" aria-hidden="true"></div>
+
+            <!-- Anillo de destello háptico (RNF-003) -->
+            <div id="hapticRing" class="haptic-ring" aria-hidden="true"></div>
+
+            <!-- TimeText + CaptionBanner de síntesis de voz (RF-002) -->
+            <div class="wear-time-bar">
+              <div id="wearTimeText" class="wear-time-text">19:30</div>
+              <div id="captionBanner" class="caption-banner" role="status" aria-live="polite">
+                <svg class="caption-eq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                  <line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="6" x2="8" y2="18"/>
+                  <line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="6" x2="16" y2="18"/>
+                  <line x1="20" y1="10" x2="20" y2="14"/>
+                </svg>
+                <span id="captionText" class="caption-text"></span>
+              </div>
+            </div>
+
+            <!-- PositionIndicator lateral -->
+            <div id="positionIndicator" class="position-indicator" aria-hidden="true">
+              <div id="positionIndicatorThumb" class="position-indicator-thumb"></div>
+            </div>
+
+            <!-- ROUTER DE PANTALLAS WEAR OS -->
+            <div class="watch-router">
+
+              <!-- 1. HOME SCREEN -->
+              <div id="view-HOME" class="watch-view active">
+                <div class="orb-container">
+                  <div id="homeSearchingRing" class="orb-progress-ring"></div>
+                  <button id="homeOrbBtn" class="orb-button" type="button" aria-label="Dictar producto, SKU, ubicación o comando">
+                    <canvas id="homeOrbCanvas" width="116" height="116" style="width:96px;height:96px;"></canvas>
+                  </button>
+                </div>
+
+                <div id="homeMessageText" class="home-message">
+                  Dicta producto, “agregar…” o “eliminar…”
+                </div>
+
+                <div class="home-status-row">
+                  <div class="status-pill">
+                    <span id="statusDot" class="status-dot"></span>
+                    <span id="statusLabel">En línea · OP-07</span>
+                  </div>
+                  <button id="themeToggleBtn" class="theme-compact-btn" type="button" title="Cambiar modo oscuro / claro (RNF-002)">
+                    <svg id="themeToggleIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                  </button>
+                </div>
+
+                <div class="home-chips-row">
+                  <button id="browseCatalogBtn" class="compact-chip" type="button">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                      <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                    <span>Catálogo</span>
+                  </button>
+                  <button id="homeAddProductBtn" class="compact-chip signal" type="button">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Nuevo</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2. RESULTS SCREEN (ScalingLazyColumn) -->
+              <div id="view-RESULTS" class="watch-view" style="padding:0;">
+                <div id="resultsScrollContainer" class="scaling-lazy-column">
+                  <div id="resultsHeaderTitle" class="results-header">Catálogo</div>
+                  <button id="resultsAddProductBtn" class="compact-chip signal" type="button" style="margin-bottom:4px;flex-shrink:0;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Agregar por voz</span>
+                  </button>
+                  <div id="resultsOfflineBanner" class="offline-banner-label" style="display:none;">
+                    SIN CONEXIÓN · CATÁLOGO LOCAL
+                  </div>
+                  <div id="resultsItemsContainer" style="width:100%;display:flex;flex-direction:column;gap:7px;"></div>
+                </div>
+              </div>
+
+              <!-- 3. PRODUCT SCREEN -->
+              <div id="view-PRODUCT" class="watch-view">
+                <div id="productEyebrow" class="eyebrow-text" style="color:var(--echo-signal);margin-top:10px;">A-01-03 · CJA-001</div>
+                <div id="productName" class="product-name-title">Cajas tipo A</div>
+
+                <!-- Vista normal de auditoría -->
+                <div id="productNormalSection" style="display:flex;flex-direction:column;align-items:center;">
+                  <div id="productRepeatBox" class="product-qty-box" title="Toca para repetir lectura por voz (RF-002)">
+                    <div class="product-qty-row">
+                      <span id="productSystemQty" class="quantity-text">50</span>
+                      <span id="productUnit" class="product-unit-label">cajas</span>
+                    </div>
+                    <span class="eyebrow-text" style="color:var(--echo-muted);margin-top:2px;">SEGÚN SISTEMA</span>
+                  </div>
+
+                  <div class="product-actions-row">
+                    <button id="productDeleteRequestBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-discrepancy);" type="button" aria-label="Eliminar producto">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                      </svg>
+                    </button>
+
+                    <button id="productMismatchBtn" class="press-btn btn-circle-52" style="background:var(--echo-discrepancy);color:var(--echo-on-color);" type="button" aria-label="No coincide, registrar cantidad real">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                      </svg>
+                    </button>
+
+                    <button id="productMatchBtn" class="press-btn btn-pill-ok" style="background:var(--echo-match);color:var(--echo-on-color);" type="button" aria-label="Coincide, confirmar conteo">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      <span>OK</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Confirmación de eliminación -->
+                <div id="productDeleteSection" style="display:none;flex-direction:column;align-items:center;margin-top:10px;">
+                  <div style="font-size:14px;font-weight:600;color:var(--echo-discrepancy);margin-bottom:12px;">
+                    ¿Eliminar del catálogo?
+                  </div>
+                  <div class="product-actions-row">
+                    <button id="productCancelDeleteBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Cancelar eliminación">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    </button>
+                    <button id="productConfirmDeleteBtn" class="press-btn btn-pill-wide" style="background:var(--echo-discrepancy);color:var(--echo-on-color);" type="button" aria-label="Confirmar eliminación">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      </svg>
+                      <span>Eliminar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. COUNT SCREEN (Discrepancias RF-004) -->
+              <div id="view-COUNT" class="watch-view">
+                <div class="eyebrow-text" style="color:var(--echo-muted);margin-top:8px;">CONTEO REAL</div>
+
+                <div class="stepper-row">
+                  <button id="countMinusBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Restar uno (mantener pulsado repite)">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+
+                  <div id="countNumberValue" class="quantity-text count-number-display" style="color:var(--echo-match);">50</div>
+
+                  <button id="countPlusBtn" class="press-btn btn-circle-52" style="background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Sumar uno (mantener pulsado repite)">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                </div>
+
+                <div id="countDiffText" class="count-diff-text" style="color:var(--echo-match);">Igual al sistema</div>
+
+                <div class="product-actions-row">
+                  <button id="countDictateBtn" class="orb-button" type="button" aria-label="Dictar cantidad por voz">
+                    <canvas id="countOrbCanvas" width="76" height="76" style="width:62px;height:62px;"></canvas>
+                  </button>
+
+                  <button id="countSubmitBtn" class="press-btn btn-pill-wide" style="background:var(--echo-match);color:var(--echo-on-color);" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Registrar</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 5. ADD PRODUCT SCREEN -->
+              <div id="view-ADD_PRODUCT" class="watch-view">
+                <div class="eyebrow-text" style="color:var(--echo-signal);margin-top:8px;">NUEVO PRODUCTO</div>
+                <div id="addProductNameText" class="product-name-title" style="font-size:15px;margin-top:4px;">
+                  Toca el orbe y dicta el nombre
+                </div>
+                <div id="addProductMetaText" style="font-size:12px;color:var(--echo-muted);margin-top:2px;">
+                  A-01-01 · unidades
+                </div>
+
+                <div class="stepper-row" style="margin:6px 0;">
+                  <button id="addMinusBtn" class="press-btn" style="width:44px;height:44px;background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Restar uno">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                  <div id="addProductQtyValue" style="font-size:34px;font-weight:800;min-width:66px;text-align:center;font-variant-numeric:tabular-nums;">10</div>
+                  <button id="addPlusBtn" class="press-btn" style="width:44px;height:44px;background:var(--echo-surface-high);color:var(--echo-on-surface);" type="button" aria-label="Sumar uno">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                </div>
+
+                <div class="product-actions-row">
+                  <button id="addDictateBtn" class="orb-button" type="button" aria-label="Dictar nombre y cantidad del producto">
+                    <canvas id="addOrbCanvas" width="72" height="72" style="width:58px;height:58px;"></canvas>
+                  </button>
+                  <button id="addProductSaveBtn" class="press-btn btn-pill-wide" style="background:var(--echo-match);color:var(--echo-on-color);" type="button" disabled>
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Guardar</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 6. DONE SCREEN (Pantalla Completa de Color Universal RNF-002) -->
+              <div id="view-DONE" class="watch-view done-view" style="background:var(--echo-match);color:var(--echo-on-color);">
+                <div class="done-icon-wrap">
+                  <svg id="doneIconSvg" width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></svg>
+                </div>
+                <div id="doneTitleText" class="done-title">Confirmado</div>
+                <div id="doneSubtitleText" class="done-subtitle">Cajas tipo A</div>
+              </div>
+
+            </div>
+
+            <!-- LISTENING OVERLAY (Ondas y Orbe en vivo) -->
+            <div id="listeningOverlay" class="listening-overlay" role="dialog" aria-label="Escuchando comando de voz">
+              <div id="listeningStatusText" class="eyebrow-text" style="color:var(--echo-signal);">ESCUCHANDO</div>
+              <div class="listening-orb-box">
+                <canvas id="listeningRipplesCanvas" class="ripples-canvas" width="140" height="140"></canvas>
+                <canvas id="listeningOrbCanvas" width="104" height="104" style="width:86px;height:86px;"></canvas>
+              </div>
+              <div id="listeningPromptText" class="listening-prompt-text">Producto, “agregar…” o “eliminar…”</div>
+              <div class="listening-tap-hint">Toca para terminar</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="watch-lug bottom" aria-hidden="true"></div>
+      <div class="watch-strap bottom" aria-hidden="true"></div>
+
+      <div class="watch-hardware-hint">
+        <span>🖱️ Rueda / Corona: Ajustar o recorrer</span>
+        <span>👉 Deslizar derecha / Botón lateral: Atrás</span>
+      </div>
+    </section>
+
+    <!-- ======== PANEL INTERACTIVO DE DEMOSTRACIÓN, SUPERVISIÓN Y EMULACIÓN ======== -->
+    <aside class="demo-panel" aria-label="Panel de control de demostración">
+      <nav class="panel-tabs">
+        <button class="panel-tab active" data-panel-tab="voice" type="button">🎤 Demo de Voz (1-Clic)</button>
+        <button class="panel-tab" data-panel-tab="supervisor" type="button">📊 Backend &amp; BD en Vivo</button>
+        <button class="panel-tab" data-panel-tab="smartwatch" type="button">⌚ Emular en Smartwatch</button>
+      </nav>
+
+      <!-- PESTAÑA 1: INYECTOR DE COMANDOS DE VOZ PARA LA DEMOSTRACIÓN -->
+      <div class="panel-section active" data-panel-section="voice">
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>RF-001 · Búsqueda por Voz (Nombre, SKU deletreado o Ubicación)</span>
+          </div>
+          <div class="section-card-desc">
+            Puedes hablar directamente al micrófono tocando el <strong>VoiceOrb</strong> del reloj o simular cualquier frase de un operario con un clic (sin usar teclado QWERTY, cumpliendo RNF-001):
+          </div>
+          <div class="voice-chips-grid">
+            <button class="voice-preset-btn" data-voice-phrase="Cajas tipo A" data-voice-target="SEARCH" type="button">🗣️ “Cajas tipo A”</button>
+            <button class="voice-preset-btn" data-voice-phrase="se jota a cero cero uno" data-voice-target="SEARCH" type="button">🗣️ “C J A cero cero uno” (SKU)</button>
+            <button class="voice-preset-btn" data-voice-phrase="pasillo B tres uno" data-voice-target="SEARCH" type="button">🗣️ “Pasillo B tres uno” (Ubicación)</button>
+            <button class="voice-preset-btn" data-voice-phrase="guantes de nitrilo" data-voice-target="SEARCH" type="button">🗣️ “Guantes de nitrilo” (Varias coincidencias)</button>
+            <button class="voice-preset-btn" data-voice-phrase="tornillos" data-voice-target="SEARCH" type="button">🗣️ “Tornillos”</button>
+            <button class="voice-preset-btn" data-voice-phrase="pallets europeos" data-voice-target="SEARCH" type="button">🗣️ “Pallets europeos”</button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>RF-004 · Dictar Conteo Real en Discrepancia</span>
+          </div>
+          <div class="section-card-desc">
+            Cuando abras la pantalla de <strong>Conteo Real (✎)</strong> en un producto, dicta el número en español o usa la corona giratoria / botones +/−:
+          </div>
+          <div class="voice-chips-grid">
+            <button class="voice-preset-btn" data-voice-phrase="cuarenta y ocho" data-voice-target="COUNT" type="button">🔢 “Cuarenta y ocho” (48)</button>
+            <button class="voice-preset-btn" data-voice-phrase="cincuenta y cinco" data-voice-target="COUNT" type="button">🔢 “Cincuenta y cinco” (55)</button>
+            <button class="voice-preset-btn" data-voice-phrase="ciento veinte" data-voice-target="COUNT" type="button">🔢 “Ciento veinte” (120)</button>
+            <button class="voice-preset-btn" data-voice-phrase="treinta y dos" data-voice-target="COUNT" type="button">🔢 “Treinta y dos” (32)</button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>Comandos de Voz: Agregar Producto, Eliminar y Tema Visual</span>
+          </div>
+          <div class="voice-chips-grid">
+            <button class="voice-preset-btn" data-voice-phrase="agregar cascos azules pasillo c dos uno veinticinco unidades" data-voice-target="SEARCH" type="button">➕ “Agregar cascos azules pasillo C 2 1 veinticinco”</button>
+            <button class="voice-preset-btn" data-voice-phrase="eliminar cajas de archivo" data-voice-target="SEARCH" type="button">🗑️ “Eliminar cajas de archivo”</button>
+            <button class="voice-preset-btn" data-voice-phrase="modo claro" data-voice-target="SEARCH" type="button">☀️ “Modo claro” (Exteriores)</button>
+            <button class="voice-preset-btn" data-voice-phrase="modo oscuro" data-voice-target="SEARCH" type="button">🌙 “Modo oscuro” (OLED)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 2: MONITOR DEL BACKEND Y BASE DE DATOS EN VIVO -->
+      <div class="panel-section" data-panel-section="supervisor">
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>RF-005 / RF-006 · Auditorías Recibidas en el Servidor Central</span>
+            <button id="refreshAuditsBtn" class="mini-btn approve" style="background:#222932;color:#5AD8FF;" type="button">↻ Actualizar</button>
+          </div>
+          <div class="section-card-desc">
+            Las confirmaciones quedan en <code>CONFIRMED</code> y las discrepancias en <code>PENDING_REVIEW</code>. Como supervisor puedes aprobarlas para actualizar el stock real en la base de datos:
+          </div>
+          <div id="supervisorAuditsList" class="audits-list">
+            <div class="section-card-desc">Cargando auditorías desde el servidor…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 3: AÑADIR Y EMULAR EN UN SMARTWATCH REAL O EMULADOR -->
+      <div class="panel-section" data-panel-section="smartwatch">
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>1. Instalar como App Web (PWA) o Modo Pantalla de Reloj 1:1</span>
+          </div>
+          <div class="section-card-desc">
+            Esta aplicación web incluye manifiesto PWA (<code>manifest.json</code>) y Service Worker offline (<code>sw.js</code>). Puedes abrirla directamente en el navegador de un smartwatch, instalarla como app o activar la vista 1:1 para emularla en Chrome DevTools (384×384 / 454×454):
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="installPwaBtn" class="voice-preset-btn" type="button">📲 Instalar App / Abrir en Modo Smartwatch 1:1</button>
+            <a href="/?mode=watch" class="voice-preset-btn" style="text-decoration:none;">🔗 Abrir URL directa para Reloj (/?mode=watch)</a>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>2. Emular la App Nativa en el Emulador Android Wear OS</span>
+          </div>
+          <div class="section-card-desc">
+            El proyecto conserva intacta la aplicación nativa en Kotlin + Jetpack Compose for Wear OS (<code>EchoStock-WearApp</code>) lista para correr en el emulador oficial <strong>Wear OS 5 Round</strong>:
+          </div>
+          <div class="code-snippet">.\iniciar-emulador.bat   # o en EchoStock-WearApp: .\gradlew.bat installDebug</div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-card-title">
+            <span>3. Conexión con el Backend Desplegado</span>
+          </div>
+          <div class="form-field">
+            <label for="configApiUrl">URL Base de la API (Local o Render desplegado)</label>
+            <input id="configApiUrl" type="text" placeholder="/api/v1 o https://tu-backend.onrender.com/api/v1" />
+          </div>
+          <div class="form-field">
+            <label for="configApiKey">Cabecera X-Api-Key</label>
+            <input id="configApiKey" type="text" placeholder="echostock-dev-key" />
+          </div>
+          <div class="form-field">
+            <label for="configOperator">Código de Operario</label>
+            <input id="configOperator" type="text" placeholder="OP-07" />
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button id="saveConfigBtn" class="voice-preset-btn" style="background:#5AD8FF;color:#000;font-weight:700;" type="button">Guardar y Probar Conexión</button>
+            <span id="configSaveStatus" style="font-size:11.5px;font-weight:600;"></span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="./web-config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

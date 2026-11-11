@@ -78,4 +78,14 @@ class SecurityAndHealthApiTest extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.info.title").value("EchoStock API"))
                 .andExpect(jsonPath("$.paths['/api/v1/products/search']").exists());
     }
+
+    @Test
+    void smartwatchWebApp_andConfigJs_arePublic() throws Exception {
+        mvc.perform(get("/index.html"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
+        mvc.perform(get("/web-config.js"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("__ECHOSTOCK_SERVER_CONFIG__")));
+    }
 }

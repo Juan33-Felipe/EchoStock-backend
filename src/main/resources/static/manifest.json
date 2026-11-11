@@ -1,0 +1,20 @@
+{
+  "name": "EchoStock — Wear OS Smartwatch",
+  "short_name": "EchoStock",
+  "description": "Auditoría de inventario por voz para smartwatch (Wear OS / Web PWA).",
+  "start_url": "./?mode=watch",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "es-ES",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
